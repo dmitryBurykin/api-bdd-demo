@@ -82,7 +82,7 @@ public class SoapMessageBroker {
             } catch (IOException e) {
                 throw new FrameworkException(
                         String.format("Не удалось отправить soap-запрос на сервер. " +
-                                "Параметры: {URL: \"%s\", Request: \"%s\"}", this.soapConnection.getURL(), responseMessage), e);
+                                "Параметры: {URL: \"%s\", Request: \"%s\"}", this.soapConnection.getURL(), requestMessage), e);
             }
         }
         else {
