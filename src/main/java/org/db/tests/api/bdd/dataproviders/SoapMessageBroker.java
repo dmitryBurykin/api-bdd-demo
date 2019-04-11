@@ -18,15 +18,16 @@ import java.util.Map;
  */
 public class SoapMessageBroker {
 
-    //private String endpointURL;
+    private String endpointURL;
     private String requestMessage;
     private String responseMessage;
     private int responseStatus;
 
-    private HttpURLConnection soapConnection;
+//    private HttpURLConnection soapConnection;
 
     public SoapMessageBroker(String endpointURL) {
-        setSoapConnection(endpointURL);
+        this.endpointURL = endpointURL;
+//        setSoapConnection(endpointURL);
     }
 
     public void setRequestMessage(String requestMessage) {
@@ -56,8 +57,10 @@ public class SoapMessageBroker {
     }
 
     public void sendSoapRequest(){
+        HttpURLConnection soapConnection = getSoapConnection();
         if (this.requestMessage!=null){
             try {
+
                 // Отправить данные на сервер
                 DataOutputStream wr = new DataOutputStream(soapConnection.getOutputStream());
                 wr.writeBytes(requestMessage);
@@ -82,7 +85,7 @@ public class SoapMessageBroker {
             } catch (IOException e) {
                 throw new FrameworkException(
                         String.format("Не удалось отправить soap-запрос на сервер. " +
-                                "Параметры: {URL: \"%s\", Request: \"%s\"}", this.soapConnection.getURL(), requestMessage), e);
+                                "Параметры: {URL: \"%s\", Request: \"%s\"}", soapConnection.getURL(), requestMessage), e);
             }
         }
         else {
@@ -90,14 +93,14 @@ public class SoapMessageBroker {
         }
     }
 
-    private void setSoapConnection(String endpointURL) {
+    private HttpURLConnection getSoapConnection() {
         try {
             URL url = new URL(endpointURL);
             HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
             httpConnection.setRequestMethod("POST");
             httpConnection.setRequestProperty("Content-Type","application/soap+xml; charset=utf-8");
             httpConnection.setDoOutput(true);
-            this.soapConnection = httpConnection;
+            return httpConnection;
         }
         catch (MalformedURLException e)
         {
